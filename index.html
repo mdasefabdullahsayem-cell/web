@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do You Love Me mohuya?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        h1 {
+            color: #ff6b8b;
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .question {
+            font-size: 1.8rem;
+            color: #555;
+            margin-bottom: 40px;
+            font-weight: bold;
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            min-height: 120px;
+            position: relative;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        #yes-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        #yes-btn:hover {
+            background-color: #3e8e41;
+            transform: scale(1.05);
+        }
+        
+        #no-btn {
+            background-color: #f44336;
+            color: white;
+            position: absolute;
+            transition: all 0.5s ease;
+        }
+        
+        #no-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .response {
+            margin-top: 30px;
+            font-size: 2rem;
+            font-weight: bold;
+            min-height: 60px;
+            color: #ff6b8b;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .response.show {
+            opacity: 1;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            font-size: 1rem;
+            color: #777;
+            font-style: italic;
+        }
+        
+        .heart {
+            font-size: 3rem;
+            color: #ff6b8b;
+            margin: 20px 0;
+            animation: heartbeat 1.5s infinite;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            .question { font-size: 1.5rem; }
+            .btn { padding: 12px 30px; font-size: 1.3rem; }
+            .buttons-container { gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="heart">❤️</div>
+        <h1>Love Detector</h1>
+        <div class="question">Do you love me mohuya?</div>
+        
+        <div class=" right buttons-container">
+            <button id="yes-btn" class="btn" right side>Yes</button>
+            <button id="no-btn" class="btn" left side>No</button>
+        </div>
+        
+        <div id="response" class="response"></div>
+        
+        <div class="instructions">
+            Try clicking the "No" button... if you can catch it!
+        </div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const response = document.getElementById('response');
+        const buttonsContainer = document.querySelector('.buttons-container');
+        
+        // Get container dimensions
+        const containerRect = buttonsContainer.getBoundingClientRect();
+        
+        // Store the original position of the "No" button
+        let originalNoBtnPosition = {
+            left: noBtn.offsetLeft,
+            top: noBtn.offsetTop
+        };
+        
+        // Function to generate a random position within the container
+        function getRandomPosition() {
+            const containerWidth = buttonsContainer.offsetWidth;
+            const containerHeight = buttonsContainer.offsetHeight;
+            
+            // Account for button size
+            const buttonWidth = noBtn.offsetWidth;
+            const buttonHeight = noBtn.offsetHeight;
+            
+            // Calculate max positions to keep button fully inside container
+            const maxLeft = containerWidth - buttonWidth;
+            const maxTop = containerHeight - buttonHeight;
+            
+            // Generate random position within bounds
+            const randomLeft = Math.floor(Math.random() * maxLeft);
+            const randomTop = Math.floor(Math.random() * maxTop);
+            
+            return { left: randomLeft, top: randomTop };
+        }
+        
+        // Function to move the "No" button to a random position
+        function moveNoButton() {
+            const newPosition = getRandomPosition();
+            
+            // Apply the new position
+            noBtn.style.left = `${newPosition.left}px`;
+            noBtn.style.top = `${newPosition.top}px`;
+        }
+        
+        // When mouse hovers over the "No" button, move it
+        noBtn.addEventListener('mouseover', function() {
+            moveNoButton();
+        });
+        
+        // When trying to click the "No" button, move it before click
+        noBtn.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            moveNoButton();
+            
+            // Try to move it again after a short delay for extra difficulty
+            setTimeout(moveNoButton, 200);
+        });
+        
+        // When trying to touch the "No" button on mobile, move it
+        noBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            moveNoButton();
+            
+            // Try to move it again after a short delay
+            setTimeout(moveNoButton, 200);
+        });
+        
+        // When "Yes" button is clicked
+        yesBtn.addEventListener('click', function() {
+            response.textContent = "I love you too! ❤️";
+            response.classList.add('show');
+            
+            // Reset "No" button to original position
+            noBtn.style.left = `${originalNoBtnPosition.left}px`;
+            noBtn.style.top = `${originalNoBtnPosition.top}px`;
+            
+            // Celebrate with confetti effect
+            createConfetti();
+        });
+        
+        // Confetti effect function
+        function createConfetti() {
+            const colors = ['#ff6b8b', '#4CAF50', '#2196F3', '#FFEB3B', '#9C27B0'];
+            const confettiCount = 100;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'absolute';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-20px';
+                confetti.style.opacity = '0.9';
+                confetti.style.zIndex = '9999';
+                
+                document.body.appendChild(confetti);
+                
+                // Animation
+                const animation = confetti.animate([
+                    { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                    { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 2000 + 1000,
+                    easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+                });
+                
+                // Remove confetti after animation completes
+                animation.onfinish = () => confetti.remove();
+            }
+        }
+        
+        // Initialize the "No" button in a random position on load
+        window.addEventListener('load', function() {
+            // Small delay to ensure everything is rendered
+            setTimeout(() => {
+                moveNoButton();
+            }, 100);
+        });
+    </script>
+</body>
+</html>
